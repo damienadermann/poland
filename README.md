@@ -1,10 +1,177 @@
-# Poland
+# Poland (concept)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/poland`. To experiment with that code, run `bin/console` for an interactive prompt.
+A pattern for contexts in ruby applications
 
-TODO: Delete this and the text above, and describe your gem
+## Description
 
-## Installation
+Poland is a toolkit encouraging simple code written in testable ruby.
+
+## Thoughtdump
+
+### Apps `Poland::Context`
+
+```rb
+module Comments
+  class Context < Poland::Context
+    register_commands Commands::AddComment, Commands::RemoveComment
+    register_queries Queries::GetComments, Queries::GetComment
+
+    config do |config|
+      config.something = 'somethingelse'
+    end
+
+    container do | container |
+      container.factory :add_comment do |container|
+        Comments::AddComment.new(app[:comments_repository])
+      end
+
+      container.singleton :comments_repository, Comments::Repository
+    end
+  end
+end
+
+module Comments
+  class AddComment
+    attr_reader :comments_repository
+
+    def initialize(comments_repository)
+      @comments_repository = comments_repository
+    end
+
+    def perform(params)
+      form = CommentCreateForm.new(params)
+      if form.valid?
+        comments_repository.insert(form.comment)
+      end
+      Poland::Result::Form.new(form)
+    end
+  end
+end
+
+module Comments
+  class GetComment
+    attr_reader :comments_repository
+
+    def initialize(comments_repository)
+      @comments_repository = comments_repository
+    end
+
+    def fetch(comment_id)
+      result = comments_repository.fetch(id)
+      Dry::Monads::Maybe.bind(result)
+    end
+  end
+end
+```
+
+### Inversion of Control `Poland::IOC`
+
+```rb
+class Service
+  def initialize
+    puts "Initialized"
+  end
+end
+
+container = Poland::IOC::Container.new
+
+container.bind :service do |container|
+  Service.new
+end
+
+container.factory :service2 do |container|
+  Service.new
+end
+
+container.instance :service3, Service.new
+=> Initialized
+
+container[:service]
+=> Initialized
+container[:service]
+
+container[:service2]
+=> Initialized
+container[:service2]
+=> Initialized
+
+container[:service3]
+
+```
+
+### Forms `Poland::Form`
+
+```rb
+class CommentCreateForm
+  include Poland::Form
+
+  schema do
+    optional(:title).filled
+
+    required(:body).filled
+  end
+
+  def comment
+    Comment.new(schema.output)
+  end
+end
+
+params = {
+  title: "Title",
+  body: "Body"
+}
+form = CommentCreateForm.new(params)
+form.valid?
+=> true
+
+form.comment
+=> <Comment title="title" body="body">
+```
+
+### Results `Polanc::Results`
+
+#### Poland::Results::Result
+```rb
+result = Poland::Result(payload: "something")
+result.success?
+=> true
+result.payload
+=> "something"
+result.errors
+=> []
+
+result2 = Poloand::Result(errors: ["Something"])
+result2.success?
+=> false
+result2.payload
+=> nil
+result2.errors
+=> ["Something"]
+```
+
+#### Poland::Results::FormResult
+```rb
+successful_form = Poland::FormResult.new(payload)
+result = Poland::FormResult.new(successful_form)
+result.success?
+=> true
+result.payload
+=> "something"
+result.errors
+=> []
+
+unsuccessful_form = Poland::FormResult.new(payload)
+result = Poland::FormResult.new(successful_form)
+result2.success?
+=> false
+result2.payload
+=> nil
+result2.errors
+=> ["Something"]
+```
+
+
+## Installation (TODO)
 
 Add this line to your application's Gemfile:
 
