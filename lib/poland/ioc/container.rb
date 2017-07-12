@@ -17,6 +17,10 @@ module Poland
         add_resolver(name, AliasResolver.new(self, aliased_container_name))
       end
 
+      def bind_class(name, klass, *args)
+        add_resolver(name, ClassResolver.new(self, klass, args))
+      end
+
       def [](container_name)
         resolve(container_name)
       end
@@ -71,11 +75,32 @@ module Poland
 
     class AliasResolver
       def initialize(container, aliased_container_name)
+        #@container = container
         @aliased_container_name = aliased_container_name
       end
 
       def resolve
-        container[aliased_container_name]
+        @container[aliased_container_name]
+      end
+    end
+
+    class ClassResolver
+      def initialize(container, klass, args)
+        @container = container
+        @klass = klass
+        @args = args
+      end
+
+      def resolve
+        @resolved_instance ||= @klass.new(*resolved_arguments)
+      end
+
+      private
+
+      def resolved_arguments
+        @args.map do |arg|
+          @container[arg]
+        end
       end
     end
 

@@ -79,7 +79,29 @@ describe Poland::IOC::Container do
     it "resolves an aliased container name" do
       @container.instance(:test, :test_value)
       @container.alias(:test_alias, :test_value)
-      assert_equal :test_value, @container[:test]
+      assert_equal :test_value, @container[:test_alias]
+    end
+  end
+
+  describe "#bind_class" do
+    it "creates a single shared instance of a class" do
+      @container.bind_class(:test_class, TestClass)
+      instance1 = @container[:test_class]
+      instance2 = @container[:test_class]
+
+      assert_equal instance1, instance2
+      assert_kind_of(TestClass, instance1)
+
+      assert_equal 1, instance1.instance_number
+      assert_equal 1, instance2.instance_number
+    end
+
+    it "creates a single instance of a class with args resolved to bound container values" do
+      @container.bind_class(:test_class, TestClass, :test_value)
+      @container.instance(:test_value, :test_arg)
+      instance = @container[:test_class]
+
+      assert_equal :test_arg, instance.arg
     end
   end
 
