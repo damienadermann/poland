@@ -75,12 +75,12 @@ module Poland
 
     class AliasResolver
       def initialize(container, aliased_container_name)
-        #@container = container
+        @container = container
         @aliased_container_name = aliased_container_name
       end
 
       def resolve
-        @container[aliased_container_name]
+        @container[@aliased_container_name]
       end
     end
 

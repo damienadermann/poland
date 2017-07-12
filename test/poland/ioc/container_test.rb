@@ -78,7 +78,7 @@ describe Poland::IOC::Container do
   describe "#alias" do
     it "resolves an aliased container name" do
       @container.instance(:test, :test_value)
-      @container.alias(:test_alias, :test_value)
+      @container.alias(:test_alias, :test)
       assert_equal :test_value, @container[:test_alias]
     end
   end
