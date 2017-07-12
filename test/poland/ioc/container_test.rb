@@ -75,6 +75,14 @@ describe Poland::IOC::Container do
     end
   end
 
+  describe "#alias" do
+    it "resolves an aliased container name" do
+      @container.instance(:test, :test_value)
+      @container.alias(:test_alias, :test_value)
+      assert_equal :test_value, @container[:test]
+    end
+  end
+
   class TestClass
     class << self
       attr_accessor :instance_count

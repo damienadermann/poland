@@ -13,6 +13,10 @@ module Poland
         add_resolver(name, FactoryResolver.new(self, block))
       end
 
+      def alias(name, aliased_container_name)
+        add_resolver(name, AliasResolver.new(self, aliased_container_name))
+      end
+
       def [](container_name)
         resolve(container_name)
       end
@@ -62,6 +66,16 @@ module Poland
 
       def resolve
         @value
+      end
+    end
+
+    class AliasResolver
+      def initialize(container, aliased_container_name)
+        @aliased_container_name = aliased_container_name
+      end
+
+      def resolve
+        container[aliased_container_name]
       end
     end
 
