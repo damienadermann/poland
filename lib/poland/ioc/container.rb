@@ -41,49 +41,6 @@ module Poland
       end
     end
 
-    class BindResolver
-      def initialize(container, block)
-        @container = container
-        @block = block
-      end
-
-      def resolve
-        @resolved_instance ||= @block.call(@container)
-      end
-    end
-
-    class FactoryResolver
-      def initialize(container, block)
-        @container = container
-        @block = block
-      end
-
-      def resolve
-        @block.call(@container)
-      end
-    end
-
-    class InstanceResolver
-      def initialize(value)
-        @value = value
-      end
-
-      def resolve
-        @value
-      end
-    end
-
-    class AliasResolver
-      def initialize(container, aliased_container_name)
-        @container = container
-        @aliased_container_name = aliased_container_name
-      end
-
-      def resolve
-        @container[@aliased_container_name]
-      end
-    end
-
     class ClassResolver
       def initialize(container, klass, args)
         @container = container
@@ -103,17 +60,5 @@ module Poland
         end
       end
     end
-
-    class NullResolver
-      def initialize(name)
-        @name = name
-      end
-
-      def resolve
-        raise InvalidContainerNameError, "Unset Container name: #{@name}"
-      end
-    end
-
-    class InvalidContainerNameError < StandardError; end
   end
 end

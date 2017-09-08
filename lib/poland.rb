@@ -1,5 +1,5 @@
 require "poland/version"
+require "poland/ioc"
 
 module Poland
-  # Your code goes here...
 end
