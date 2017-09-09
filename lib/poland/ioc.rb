@@ -1,5 +1,6 @@
 module Poland
   module IOC
+    require 'poland/ioc/container'
     require 'poland/ioc/alias_resolver'
     require 'poland/ioc/bind_resolver'
     require 'poland/ioc/factory_resolver'

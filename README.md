@@ -17,7 +17,7 @@ module Comments
     register_queries Queries::GetComments, Queries::GetComment
 
     config do |config|
-      config.something = 'somethingelse'
+      config[:something] = 'somethingelse'
     end
 
     container do | container |

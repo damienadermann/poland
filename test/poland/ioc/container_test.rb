@@ -1,5 +1,5 @@
 require "test_helper"
-require "poland/ioc/container"
+require "poland"
 
 describe Poland::IOC::Container do
   before do
