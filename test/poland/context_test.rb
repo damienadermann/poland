@@ -28,4 +28,32 @@ describe Poland::Context do
       assert_equal(context.config, {key: :value, key1: :value})
     end
   end
+
+  describe "container" do
+    before(:suite) do
+      class Context < Poland::Context
+        config do |config|
+          config[:key] = :value
+        end
+
+        container do |container|
+          container.instance :test, config[:key]
+        end
+      end
+    end
+
+    it "builds its own container" do
+      context = Context.new
+
+      assert_equal(context.container[:test], :value)
+    end
+
+    it "it can use an existing container" do
+      container = Poland::IOC::Container.new
+      container.instance(:preexisted?, true)
+      context = Context.new(container: container)
+
+      assert_equal(context.container[:preexisted?], true)
+    end
+  end
 end
