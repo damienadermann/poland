@@ -39,11 +39,7 @@ module Comments
     end
 
     def perform(params)
-      form = CommentCreateForm.new(params)
-      if form.valid?
-        comments_repository.insert(form.comment)
-      end
-      Poland::Result::Form.new(form)
+      #Do some work
     end
   end
 end
@@ -96,80 +92,7 @@ container[:service2]
 => Initialized
 
 container[:service3]
-
 ```
-
-### Forms `Poland::Form`
-
-```rb
-class CommentCreateForm
-  include Poland::Form
-
-  schema do
-    optional(:title).filled
-
-    required(:body).filled
-  end
-
-  def comment
-    Comment.new(schema.output)
-  end
-end
-
-params = {
-  title: "Title",
-  body: "Body"
-}
-form = CommentCreateForm.new(params)
-form.valid?
-=> true
-
-form.comment
-=> <Comment title="title" body="body">
-```
-
-### Results `Polanc::Results`
-
-#### Poland::Results::Result
-```rb
-result = Poland::Result(payload: "something")
-result.success?
-=> true
-result.payload
-=> "something"
-result.errors
-=> []
-
-result2 = Poloand::Result(errors: ["Something"])
-result2.success?
-=> false
-result2.payload
-=> nil
-result2.errors
-=> ["Something"]
-```
-
-#### Poland::Results::FormResult
-```rb
-successful_form = Poland::FormResult.new(payload)
-result = Poland::FormResult.new(successful_form)
-result.success?
-=> true
-result.payload
-=> "something"
-result.errors
-=> []
-
-unsuccessful_form = Poland::FormResult.new(payload)
-result = Poland::FormResult.new(successful_form)
-result2.success?
-=> false
-result2.payload
-=> nil
-result2.errors
-=> ["Something"]
-```
-
 
 ## Installation (TODO)
 
